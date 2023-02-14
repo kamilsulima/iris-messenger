@@ -1286,6 +1286,9 @@ const Nostr = {
   },
   onLoggedIn() {
     const key = iris.session.getKey();
+    if (!key) {
+      return;
+    }
     const subscribe = (filters: Filter[], callback: (event: Event) => void): string => {
       const filter = filters[0];
       const key = filter['#d']?.[0];
@@ -1355,7 +1358,7 @@ const Nostr = {
   },
   init: function () {
     this.loadSettings();
-    iris.local().get('loggedIn', this.onLoggedIn());
+    iris.local().get('loggedIn', () => this.onLoggedIn());
     let lastResubscribed = Date.now();
     document.addEventListener('visibilitychange', () => {
       // when PWA returns to foreground after 5 min dormancy, resubscribe stuff

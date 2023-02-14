@@ -43,9 +43,7 @@ async function login(k) {
 async function nostrLogin(e) {
   e.preventDefault();
   const rpub = await window.nostr.getPublicKey();
-  const k = await iris.Key.generate();
-  k.secp256k1 = { rpub };
-  await login(k);
+  await login({ rpub });
 }
 
 class Login extends Component {
@@ -104,7 +102,7 @@ class Login extends Component {
     e.preventDefault();
     let name = document.getElementById('login-form-name').value;
     iris.session.loginAsNewUser({ name, autofollow: false });
-    iris.local().get('showFollowSuggestions').put(true);
+    iris.local().set('showFollowSuggestions', true);
     name && setTimeout(() => {
       Nostr.setMetadata({ name });
     }, 100);
