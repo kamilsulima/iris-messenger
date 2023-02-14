@@ -24,7 +24,7 @@ export default class Notifications extends View {
       const hasNotifications = notifications.length > 0;
       if (hasNotifications && this.ref.current) {
         this.updateNotificationsLastOpened();
-        iris.local().get('unseenNotificationCount').put(0);
+        iris.local().set('unseenNotificationCount', 0);
       }
       this.setState({ hasNotifications });
     });

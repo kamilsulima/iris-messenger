@@ -19,10 +19,7 @@ const pubKeyRegex = /(?:^|\s)(?:@)?(npub[a-zA-Z0-9]{59,60})(?![\w/])/g;
 const noteRegex = /(?:^|\s)(?:@)?(note[a-zA-Z0-9]{59,60})(?![\w/])/g;
 
 let settings: any = {};
-iris
-  .local()
-  .get('settings')
-  .on((s) => (settings = s));
+iris.local().get('settings', (s) => (settings = s));
 
 function setImgSrc(el: JQuery<HTMLElement>, src: string): JQuery<HTMLElement> {
   if (src) {

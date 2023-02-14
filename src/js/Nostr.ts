@@ -337,7 +337,7 @@ const Nostr = {
     }
     if (followedUser === myPub) {
       if (this.followersByUser.get(followedUser)?.size === 1) {
-        iris.local().get('hasNostrFollowers').put(true);
+        iris.local().set('hasNostrFollowers', true);
       }
     }
     if (this.followedByUser.get(myPub)?.has(follower)) {
@@ -911,7 +911,7 @@ const Nostr = {
     }
     if (event.pubkey === myPub && event.tags.length) {
       if (this.followedByUser.get(myPub)?.size > 10) {
-        iris.local().get('showFollowSuggestions').put(false);
+        iris.local().set('showFollowSuggestions', false);
       }
     }
     if (event.pubkey === myPub && event.content?.length) {
@@ -1047,7 +1047,7 @@ const Nostr = {
       }
     }
     console.log('notificationsSeenTime', _this.notificationsSeenTime, 'count', count);
-    iris.local().get('unseenNotificationCount').put(count);
+    iris.local().set('unseenNotificationCount', count);
   }, 1000),
   maybeAddNotification(event: Event) {
     // if we're mentioned in tags, add to notifications
@@ -1272,25 +1272,15 @@ const Nostr = {
     iris.session.logOut();
   },
   loadSettings() {
-    iris
-      .local()
-      .get('maxRelays')
-      .on((maxRelays) => {
-        this.maxRelays = maxRelays;
-        localForage.setItem('maxRelays', maxRelays);
-      });
-    // fug. iris.local() doesn't callback properly the first time it's loaded from local storage
+    iris.local().get('maxRelays', (maxRelays) => {
+      this.maxRelays = maxRelays;
+      localForage.setItem('maxRelays', maxRelays);
+    });
     localForage.getItem('notificationsSeenTime').then((val) => {
       if (val && !this.notificationsSeenTime) {
         this.notificationsSeenTime = val;
         this.updateUnseenNotificationCount(this);
         console.log('notificationsSeenTime', this.notificationsSeenTime);
-      }
-    });
-    localForage.getItem('maxRelays').then((val) => {
-      if (val !== null) {
-        iris.local().get('maxRelays').put(val);
-        this.maxRelays = val;
       }
     });
   },

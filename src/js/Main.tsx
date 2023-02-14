@@ -52,22 +52,19 @@ class Main extends Component<Props, ReactState> {
     }
     window.onload = () => {
       // this makes sure that window.nostr is there
-      iris.local().get('loggedIn').on(this.inject());
+      iris.local().get('loggedIn', this.inject());
     };
-    iris.local().get('toggleMenu').put(false);
-    iris
-      .local()
-      .get('toggleMenu')
-      .on((show: boolean) => this.toggleMenu(show));
+    iris.local().set('toggleMenu', false);
+    iris.local().get('toggleMenu', (show: boolean) => this.toggleMenu(show));
     iris.electron && iris.electron.get('platform').on(this.inject());
-    iris.local().get('unseenMsgsTotal').on(this.inject());
+    iris.local().get('unseenMsgsTotal', this.inject());
     translationLoaded.then(() => this.setState({ translationLoaded: true }));
   }
 
   handleRoute(e: RouterOnChangeArgs) {
     const activeRoute = e.url;
     this.setState({ activeRoute });
-    iris.local().get('activeRoute').put(activeRoute);
+    iris.local().set('activeRoute', activeRoute);
     QRScanner.cleanupScanner();
   }
 

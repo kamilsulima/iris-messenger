@@ -31,12 +31,10 @@ class FeedMessageForm extends MessageForm {
       textEl.focus();
     }
     if (!this.props.replyingTo) {
-      iris
-        .local()
-        .get('channels')
-        .get('public')
-        .get('msgDraft')
-        .once((t) => !textEl.val() && textEl.val(t));
+      const listener = iris.local().get('channels/public/msgDraft', (text) => {
+        listener.off();
+        !textEl.val() && textEl.val(text);
+      });
     } else {
       const currentHistoryState = window.history.state;
       if (currentHistoryState && currentHistoryState['replyTo' + this.props.replyingTo]) {
@@ -48,7 +46,7 @@ class FeedMessageForm extends MessageForm {
   async onMsgFormSubmit(event) {
     event.preventDefault();
     if (!this.props.replyingTo) {
-      iris.local().get('channels').get('public').get('msgDraft').put(null);
+      iris.local().set('channels/public/msgDraft', null);
     }
     const textEl = $(this.newMsgRef.current);
     const text = textEl.val();
@@ -110,7 +108,7 @@ class FeedMessageForm extends MessageForm {
   onMsgTextInput(event) {
     this.setTextareaHeight(event.target);
     if (!this.props.replyingTo) {
-      iris.local().get('channels').get('public').get('msgDraft').put($(event.target).val());
+      iris.local().set('channels/public/msgDraft', $(event.target).val());
     }
     this.checkMention(event);
     this.saveDraftToHistory();
