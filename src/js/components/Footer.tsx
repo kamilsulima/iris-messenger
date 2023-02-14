@@ -35,17 +35,12 @@ class Footer extends Component<Props, State> {
   }
 
   componentDidMount() {
-    iris.local().get('unseenMsgsTotal').on(this.inject());
-    iris
-      .local()
-      .get('activeRoute')
-      .on(
-        this.sub((activeRoute) => {
-          const replaced = activeRoute.replace('/chat/new', '').replace('/chat/', '');
-          const chatId = replaced.length < activeRoute.length ? replaced : null;
-          this.setState({ activeRoute, chatId });
-        }),
-      );
+    iris.local().get('unseenMsgsTotal', this.inject());
+    iris.local().get('activeRoute', this.sub((activeRoute) => {
+      const replaced = activeRoute.replace('/chat/new', '').replace('/chat/', '');
+      const chatId = replaced.length < activeRoute.length ? replaced : null;
+      this.setState({ activeRoute, chatId });
+    }));
   }
 
   render() {
@@ -61,7 +56,7 @@ class Footer extends Component<Props, State> {
 
     return (
       <footer class="visible-xs-flex nav footer">
-        <div class="header-content" onClick={() => iris.local().get('scrollUp').put(true)}>
+        <div class="header-content" onClick={() => iris.local().set('scrollUp', true)}>
           <a href="/" class={`btn ${activeRoute === '/' ? 'active' : ''}`}>
             {Icons.home}
           </a>
