@@ -1355,10 +1355,7 @@ const Nostr = {
   },
   init: function () {
     this.loadSettings();
-    iris
-      .local()
-      .get('loggedIn')
-      .on(() => this.onLoggedIn());
+    iris.local().get('loggedIn', this.onLoggedIn());
     let lastResubscribed = Date.now();
     document.addEventListener('visibilitychange', () => {
       // when PWA returns to foreground after 5 min dormancy, resubscribe stuff

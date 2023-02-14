@@ -64,44 +64,42 @@ class Header extends Component {
     iris.local().get('showParticipants').on(this.inject());
     iris.local().get('unseenMsgsTotal').on(this.inject());
     iris.local().get('unseenNotificationCount').on(this.inject());
-    iris
-      .local()
-      .get('activeRoute')
-      .on(
-        this.sub((activeRoute) => {
-          this.setState({
-            about: null,
-            title: '',
-            activeRoute,
-            showMobileSearch: false,
-          });
-          const replaced = activeRoute.replace('/chat/new', '').replace('/chat/', '');
-          this.chatId = replaced.length < activeRoute.length ? replaced : null;
-          if (this.chatId) {
-            iris.local().get('channels').get(this.chatId).get('isTyping').on(this.inject());
-            iris
-              .local()
-              .get('channels')
-              .get(this.chatId)
-              .get('theirLastActiveTime')
-              .on(this.inject());
-          }
+    iris.local().get(
+      'activeRoute',
+      this.sub((activeRoute) => {
+        this.setState({
+          about: null,
+          title: '',
+          activeRoute,
+          showMobileSearch: false,
+        });
+        const replaced = activeRoute.replace('/chat/new', '').replace('/chat/', '');
+        this.chatId = replaced.length < activeRoute.length ? replaced : null;
+        if (this.chatId) {
+          iris.local().get('channels').get(this.chatId).get('isTyping').on(this.inject());
+          iris
+            .local()
+            .get('channels')
+            .get(this.chatId)
+            .get('theirLastActiveTime')
+            .on(this.inject());
+        }
 
-          if (activeRoute.indexOf('/chat/') === 0 && activeRoute.indexOf('/chat/new') !== 0) {
-            if (
-              activeRoute.indexOf('/chat/') === 0 &&
-              iris.session.getKey() &&
-              this.chatId === iris.session.getKey().pub
-            ) {
-              const title = html`<b style="margin-right:5px">📝</b> <b>${t('note_to_self')}</b>`;
-              this.setState({ title });
-            } else {
-              const title = html`<${Name} key=${this.chatId} pub=${this.chatId} />`;
-              this.setState({ title });
-            }
+        if (activeRoute.indexOf('/chat/') === 0 && activeRoute.indexOf('/chat/new') !== 0) {
+          if (
+            activeRoute.indexOf('/chat/') === 0 &&
+            iris.session.getKey() &&
+            this.chatId === iris.session.getKey().pub
+          ) {
+            const title = html`<b style="margin-right:5px">📝</b> <b>${t('note_to_self')}</b>`;
+            this.setState({ title });
+          } else {
+            const title = html`<${Name} key=${this.chatId} pub=${this.chatId} />`;
+            this.setState({ title });
           }
-        }),
-      );
+        }
+      }),
+    );
     this.updateRelayCount();
     this.iv = setInterval(() => this.updateRelayCount(), 1000);
   }
